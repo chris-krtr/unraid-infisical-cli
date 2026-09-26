@@ -1,0 +1,44 @@
+name: Release
+on:
+  push:
+    tags: ['v20*']
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require tag to match plugin version
+        run: |
+          expected="v$(python3 -c 'import json; print(json.load(open("release.json"))["plugin_version"])')"
+          test "$GITHUB_REF_NAME" = "$expected"
+      - name: Install validation tools
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+      - name: Validate and build
+        run: |
+          python3 scripts/check.py --require-shellcheck
+          shellcheck scripts/verify-upstream.sh
+          bash scripts/verify-upstream.sh
+          python3 scripts/build.py --repo "$GITHUB_REPOSITORY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-plugin
+          path: dist/unraid-infisical-cli.plg
+  publish:
+    needs: validate
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-plugin
+          path: dist
+      - name: Publish plugin
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/unraid-infisical-cli.plg \
+            --verify-tag --title "Infisical CLI plugin $GITHUB_REF_NAME" --notes-file CHANGELOG.md
