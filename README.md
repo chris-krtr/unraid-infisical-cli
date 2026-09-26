@@ -9,7 +9,7 @@ The initial plugin release is `2026.09.26`, pinning Infisical CLI `0.43.137`. Th
 Python 3.9+ is required on the development machine, not on Unraid. Choose the real GitHub repository that will host releases:
 
 ```sh
-python3 scripts/build.py --repo YOUR_OWNER/unraid-infisical-cli
+python3 scripts/build.py --repo chris-krtr/unraid-infisical-cli
 ```
 
 This produces `dist/unraid-infisical-cli.plg`, containing all installation and removal scripts. The build requires an explicit repository and performs no downloads. No hosted repository has been configured or published yet.
@@ -17,7 +17,7 @@ This produces `dist/unraid-infisical-cli.plg`, containing all installation and r
 After publishing a release, open **Plugins → Install Plugin** in Unraid and paste:
 
 ```text
-https://github.com/YOUR_OWNER/unraid-infisical-cli/releases/latest/download/unraid-infisical-cli.plg
+https://github.com/chris-krtr/unraid-infisical-cli/releases/latest/download/unraid-infisical-cli.plg
 ```
 
 Replace `YOUR_OWNER` with the same owner used for the build. For a local trial, copy the generated file to `/boot/unraid-infisical-cli.plg`, then run from the Unraid terminal:
